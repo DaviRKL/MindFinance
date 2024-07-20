@@ -1,8 +1,10 @@
-require('dotenv').config();
-const express = require('express');
-const { PrismaClient } = require('@prisma/client');
-const userRoutes = require('./routes/userRoutes');
-const financeRoutes = require('./routes/financeRoutes');
+import express from 'express';
+import { PrismaClient } from '@prisma/client';
+import userRoutes from './routes/userRoutes';
+import financeRoutes from './routes/financeRoutes';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const app = express();
 const prisma = new PrismaClient();
