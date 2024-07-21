@@ -3,19 +3,16 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { Request, Response } from 'express';
 
-interface AuthenticatedRequest extends Request {
-  userId: number;
-}
-
 const prisma = new PrismaClient();
 
 export const register = async (req: Request, res: Response) => {
   const { name, email, password } = req.body;
-  const hashedPassword = await bcrypt.hash(password, 10);
+  
 
-  const photo = req.file?.buffer; // Pega o buffer do arquivo de imagem
+  const photo = req.file?.buffer;
 
   try {
+    const hashedPassword = await bcrypt.hash(password, 10);
     const user = await prisma.user.create({
       data: {
         name,
