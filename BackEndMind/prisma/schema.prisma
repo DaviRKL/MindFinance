@@ -18,7 +18,7 @@ model User {
   name      String
   email     String   @unique
   password  String
-  photo     String?
+  photo     Bytes?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

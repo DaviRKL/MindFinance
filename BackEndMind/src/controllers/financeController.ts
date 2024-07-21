@@ -5,13 +5,14 @@ const prisma = new PrismaClient();
 
 export const createFinance = async (req: Request, res: Response) => {
   const { description, amount, type } = req.body;
+  const userId = (req as any).userId;
 
   const finance = await prisma.finance.create({
     data: {
       description,
       amount,
       type,
-      userId: req.userId,
+      userId: userId,
     },
   });
 
@@ -19,11 +20,17 @@ export const createFinance = async (req: Request, res: Response) => {
 };
 
 export const getFinances = async (req: Request, res: Response) => {
-  const finances = await prisma.finance.findMany({
-    where: { userId: req.userId },
-  });
-
-  res.json(finances);
+  const userId = (req as any).userId;  
+  try {
+    const finances = await prisma.finance.findMany({
+        where: { userId: userId },
+      });
+    
+      res.status(200).json(finances);
+  } catch (error) {
+    res.status(400).json({ error: 'Unable to fetch finance records' });
+  }
+  
 };
 
 export const updateFinance = async (req: Request, res: Response) => {

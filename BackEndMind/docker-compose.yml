@@ -5,8 +5,8 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: root_password
       MYSQL_DATABASE: mydatabase
-      MYSQL_USER: myuser
-      MYSQL_PASSWORD: mypassword
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root_password
     ports:
       - "3306:3306"
     volumes:
@@ -16,9 +16,9 @@ services:
     build: .
     container_name: nodeapp
     environment:
-      DB_HOST: mysql
-      DB_USER: myuser
-      DB_PASSWORD: mypassword
+      DB_HOST: locahost
+      DB_USER: root
+      DB_PASSWORD: root_password
       DB_DATABASE: mydatabase
     ports:
       - "3000:3000"
