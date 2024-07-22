@@ -30,7 +30,7 @@ export const register = async (req: Request, res: Response) => {
 export const login = async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
-  const user = await prisma.user.findUnique({ where: { email } });
+  const user = await prisma.user.findUnique({ where: { email: email, } });
 
   if (!user) {
     return res.status(401).json({ error: 'Email ou senha invalida' });

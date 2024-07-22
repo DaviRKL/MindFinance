@@ -3,11 +3,14 @@ import { PrismaClient } from '@prisma/client';
 import userRoutes from './routes/userRoutes';
 import financeRoutes from './routes/financeRoutes';
 import dotenv from 'dotenv';
+const cors = require('cors');
 
 dotenv.config();
 
 const app = express();
 const prisma = new PrismaClient();
+
+app.use(cors());
 
 app.use(express.json());
 

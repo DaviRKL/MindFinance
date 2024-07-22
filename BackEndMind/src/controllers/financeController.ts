@@ -28,7 +28,7 @@ export const getFinances = async (req: Request, res: Response) => {
     
       res.status(200).json(finances);
   } catch (error) {
-    res.status(400).json({ error: 'Unable to fetch finance records' });
+    res.status(400).json({ error: 'Não foi possivel encontrar transações' });
   }
   
 };
