@@ -15,6 +15,7 @@ const LoginForm: React.FC = () => {
             });
             if (response.data.token) {
                 localStorage.setItem('token', response.data.token);
+                document.cookie = `token=${response.data.token}; path=/; max-age=3600`;
                 router.push("/dashboard");
             }
         } catch(error) {

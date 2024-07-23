@@ -14,7 +14,7 @@ FROM node:18.17.0-alpine
 
 WORKDIR /app
 
-COPY --from=builder /app ./
+COPY --from=builder /app /app
 
 EXPOSE 3030
 
