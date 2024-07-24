@@ -11,7 +11,7 @@ interface FinanceListProps {
   finances: Finance[]; // Array de finanças a ser exibido
   onEdit: (finance: Finance) => void; // Função a ser chamada ao clicar em editar
   onDelete: (id: number) => void; // Função a ser chamada ao clicar em deletar
-}
+} 
 
 const FinanceList: React.FC<FinanceListProps> = ({ finances, onEdit, onDelete }) => {
   return (

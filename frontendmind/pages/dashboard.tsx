@@ -1,5 +1,3 @@
-'use client';
-
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import FinanceForm from '../components/FinanceForm';
@@ -9,6 +7,7 @@ interface Finance {
   id: number;
   description: string;
   amount: number;
+  createdAt: string;
   type: "INCOME" | "EXPENSE";
 }
 
@@ -16,63 +15,83 @@ const Dashboard: React.FC = () => {
   const [finances, setFinances] = useState<Finance[]>([]);
   const [selectedFinance, setSelectedFinance] = useState<Finance | undefined>(undefined);
   const [token, setToken] = useState<string | null>(null);
-  
+
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const storedToken = window.localStorage.getItem('token');
       setToken(storedToken);
     }
-    
+
   }, []);
-  
+
+
+
+  const fetchFinances = async () => {
+    if (token) {
+      try {
+        const response = await axios.get('http://localhost:3000/finances', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setFinances(response.data);
+      } catch (error) {
+        console.error('Erro ao buscar finanças:', error);
+      }
+    }
+  };
   useEffect(() => {
-    const fetchFinances = async () => {
-      const response = await axios.get('http://localhost:3000/finances', { headers: { Authorization: `Bearer ${token}` } });
-      setFinances(response.data);
-    };
     fetchFinances();
-  }, []);
+  }, [token]);
+
+
 
   const handleSuccess = () => {
     setSelectedFinance(undefined); // Limpa o formulário após sucesso
     fetchFinances();
   };
 
-  const fetchFinances = async () => {
-    const response = await axios.get('http://localhost:3000/finances', { headers: { Authorization: `Bearer ${token}` } } );
-    setFinances(response.data);
-  };
+  const totalIncome = finances
+    .filter(finance => finance.type === "INCOME")
+    .reduce((acc, finance) => acc + finance.amount, 0);
+
+  const totalExpenses = finances
+    .filter(finance => finance.type === "EXPENSE")
+    .reduce((acc, finance) => acc + finance.amount, 0);
+
+  const balance = totalIncome - totalExpenses;
+
 
   return (
     <div className="container mx-auto">
       <h1 className="text-2xl font-bold mb-4">Dashboard</h1>
       <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-semibold mb-4">Bem vindo de volta, Marcos Lopes!</h1>
-      <p className="mb-4">Seu último acesso foi em 22 de janeiro</p>
-      
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-        <div className="bg-white p-4 rounded shadow-md text-center">
-          <p className="text-green-500 text-3xl font-bold">250.00</p>
-          <p className="text-gray-700">Receitas</p>
-        </div>
-        <div className="bg-white p-4 rounded shadow-md text-center">
-          <p className="text-red-500 text-3xl font-bold">250.00</p>
-          <p className="text-gray-700">Despesas</p>
-        </div>
-        <div className="bg-white p-4 rounded shadow-md text-center">
-          <p className="text-blue-500 text-3xl font-bold">250.00</p>
-          <p className="text-gray-700">Balanço</p>
-        </div>
-      </div>
+        <h1 className="text-2xl font-semibold mb-4">Bem vindo de volta, Marcos Lopes!</h1>
+        <p className="mb-4">Seu último acesso foi em 22 de janeiro</p>
 
-      
-        <DashboardChart />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+          <div className="bg-white p-4 rounded shadow-md text-center">
+            <p className="text-green-500 text-3xl font-bold">{totalIncome.toFixed(2)}</p>
+            <p className="text-gray-700">Entradas</p>
+          </div>
+          <div className="bg-white p-4 rounded shadow-md text-center">
+            <p className="text-red-500 text-3xl font-bold">{totalExpenses.toFixed(2)}</p>
+            <p className="text-gray-700">Saidas</p>
+          </div>
+          <div className="bg-white p-4 rounded shadow-md text-center">
+            <p className={`text-blue-500 text-3xl font-bold ${balance >= 0 ? 'text-blue-500' : 'text-red-500'}`}>
+              {balance.toFixed(2)}
+            </p>
+            <p className="text-gray-700">Balanço</p>
+          </div>
+        </div>
+
+
+        <DashboardChart finances={finances}/>
         {/* <div className="bg-white p-4 rounded shadow-md">
           <h2 className="text-lg font-semibold mb-4">Em aberto</h2>
           <p className="text-gray-700">Casa: 250.00</p>
         </div> */}
-      
-    </div>
+
+      </div>
       <FinanceForm finance={selectedFinance} onSuccess={handleSuccess} />
       <table className="table-auto w-full mt-4">
         <thead>
