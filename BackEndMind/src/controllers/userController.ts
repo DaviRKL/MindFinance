@@ -7,7 +7,6 @@ const prisma = new PrismaClient();
 
 export const register = async (req: Request, res: Response) => {
   const { name, email, password } = req.body;
-  
 
   const photo = req.file?.buffer;
 
@@ -27,39 +26,83 @@ export const register = async (req: Request, res: Response) => {
   }
 };
 
-export const login = async (req: Request, res: Response) => {
-  const { email, password } = req.body;
+export const updateProfile = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const { name, email, password } = req.body;
+  const photo = req.file?.buffer;
 
-  const user = await prisma.user.findUnique({ where: { email: email, } });
+  const updatedData: any = {};
 
-  if (!user) {
-    return res.status(401).json({ error: 'Email ou senha invalida' });
+  if (name) updatedData.name = name;
+  if (email) updatedData.email = email;
+  if (password) {
+    try {
+      updatedData.password = await bcrypt.hash(password, 10);
+    } catch (error) {
+      return res.status(500).json({ message: 'Erro ao criptografar a senha', error });
+    }
   }
+  if (photo) updatedData.photo = photo;
 
-  const isPasswordValid = await bcrypt.compare(password, user.password);
+  try {
+    const user = await prisma.user.update({
+      where: { id: Number(id) },
+      data: updatedData,
+    });
 
-  if (!isPasswordValid) {
-    return res.status(401).json({ error: 'Email ou senha invalida' });
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ message: 'Erro ao atualizar o perfil', error });
   }
-
-  const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET as string, { expiresIn: '1h' });
-
-  res.json({ token });
 };
 
-export const getProfile = async (req: Request, res: Response) => {
-  const userId = (req as any).userId;  
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-    select: {
-      id: true,
-      name: true,
-      email: true,
-      photo: true, 
-      createdAt: true,
-      updatedAt: true,
-    },
-  });
+export const login = async (req: Request, res: Response) => {
+  const { email, password } = req.body;
+  try {
+    const user = await prisma.user.findUnique({ where: { email: email, } });
 
-  res.json(user);
+    if (!user) {
+      return res.status(401).json({ error: 'Email ou senha invalida' });
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+
+    if (!isPasswordValid) {
+      return res.status(401).json({ error: 'Email ou senha invalida' });
+    }
+
+    const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET as string, { expiresIn: '1h' });
+
+    res.json({ token });
+  } catch (error) {
+    console.error('Erro ao fazer login:', error);
+    res.status(500).json({ message: 'Erro ao fazer login', error });
+  }
+}
+
+
+export const getProfile = async (req: Request, res: Response) => {
+  const userId = (req as any).userId;
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        photo: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+
+    if (!user) {
+      return res.status(404).json({ error: 'Usuário não encontrado' });
+    }
+
+    res.json(user);
+  } catch (error) {
+    console.error('Erro ao buscar perfil:', error);
+    res.status(500).json({ message: 'Erro ao buscar perfil', error });
+  }
 };
