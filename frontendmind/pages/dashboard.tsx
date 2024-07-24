@@ -13,10 +13,20 @@ interface Finance {
   type: "INCOME" | "EXPENSE";
 }
 
+interface User {
+  id: string;
+  name: string;
+  email: string;
+  photo?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 const Dashboard: React.FC = () => {
   const [finances, setFinances] = useState<Finance[]>([]);
   const [selectedFinance, setSelectedFinance] = useState<Finance | undefined>(undefined);
   const [token, setToken] = useState<string | null>(null);
+  const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -26,7 +36,19 @@ const Dashboard: React.FC = () => {
 
   }, []);
 
-
+  useEffect(() => {
+    if (token) {
+      axios.get('http://localhost:3000/users/profile', {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+        .then(response => {
+          setUser(response.data);
+        })
+        .catch(error => {
+          console.error('Erro ao buscar perfil:', error);
+        });
+    }
+  }, [token]);
 
   const fetchFinances = async () => {
     if (token) {
@@ -47,7 +69,7 @@ const Dashboard: React.FC = () => {
 
 
   const handleSuccess = () => {
-    setSelectedFinance(undefined); // Limpa o formulário após sucesso
+    setSelectedFinance(undefined); 
     fetchFinances();
   };
 
@@ -64,7 +86,7 @@ const Dashboard: React.FC = () => {
 
   return (
     <>
-      <Navbar />
+      <Navbar user={user} />
       <div className="container mx-auto">
 
         <div className="container mx-auto p-4">

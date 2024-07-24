@@ -1,13 +1,42 @@
 import React from 'react';
 import { FaUserCircle, FaSignOutAlt, FaChartLine } from 'react-icons/fa';
+import { useRouter } from 'next/router';
+import { useState } from 'react';
+import Modal from './Modal'; 
 
-const Navbar: React.FC = () => {
+interface User {
+  id: string;
+  name: string;
+  email: string;
+  photo?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface NavbarProps {
+  user: User | null;
+}
+
+const Navbar: React.FC<NavbarProps> = ({user}) => {
+  const router = useRouter();
+  const [isModalOpen, setModalOpen] = useState(false);
+
   const handleProfileClick = () => {
-    console.log('Perfil clicado');
+    setModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setModalOpen(false);
+  };
+
+  const handleSaveChanges = () => {
+    // Lógica para salvar alterações do perfil
   };
 
   const handleLogoutClick = () => {
-    console.log('Logout clicado');
+    localStorage.removeItem('token');
+    document.cookie = 'token=; path=/; max-age=0';
+    router.push('/')
   };
 
   return (
@@ -31,6 +60,58 @@ const Navbar: React.FC = () => {
           <span>Sair</span>
         </button>
       </div>
+      <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
+      <div className="transition-opacity duration-300 ease-in-out opacity-100">
+          <h2 className="text-2xl mb-4">Editar Perfil</h2>
+          {user && (
+            <form onSubmit={handleSaveChanges}>
+              <div className="flex flex-col items-center mb-4">
+                <img
+                  src={user.photo ?? '/default-profile.png'}
+                  alt="Perfil"
+                  className="w-24 h-24 rounded-full mb-4 object-cover"
+                />
+                <label className="block text-gray-700">Nome</label>
+                <input
+                  type="text"
+                  className="w-full p-2 border border-gray-300 rounded"
+                  value={user.name}
+                  onChange={(e) => { user.name = e.target.value; }}
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-gray-700">Email</label>
+                <input
+                  type="email"
+                  className="w-full p-2 border border-gray-300 rounded"
+                  value={user.email}
+                  onChange={(e) => { user.email = e.target.value; }}
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-gray-700">Senha</label>
+                <input
+                  type="password"
+                  className="w-full p-2 border border-gray-300 rounded"
+                  placeholder="Digite sua nova senha"
+                />
+              </div>
+              <div className="flex justify-end">
+                <button
+                  type="button"
+                  className="bg-gray-500 text-white px-4 py-2 rounded mr-2"
+                  onClick={handleCloseModal}
+                >
+                  Cancelar
+                </button>
+                <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded">
+                  Salvar
+                </button>
+              </div>
+            </form>
+          )}
+        </div>
+      </Modal>
     </nav>
   );
 };
