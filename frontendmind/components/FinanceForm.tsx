@@ -85,7 +85,7 @@ const FinanceForm: React.FC<FinanceFormProps> = ({ finance, onSuccess }) => {
         />
       </div>
       <div className="mb-4">
-        <label className="block text-gray-700">Quantidade</label>
+        <label className="block text-gray-700">Valor</label>
         <input
           type="number"
           value={amount}
