@@ -1,8 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Chart } from 'react-google-charts';
-import axios from 'axios';
-import { useState, useEffect } from 'react';
 import { format } from 'date-fns';
+import { toast } from 'react-toastify';
 
 interface Finance {
   id: number;
@@ -16,10 +15,14 @@ interface DashboardChartProps {
   finances: Finance[];
 }
 
-const DashboardChart: React.FC<DashboardChartProps> = ({finances}) => {
-  const [data, setData] = useState<(string | number)[][]>([["Mês", "Entradas", "Saídas"]]);
+const DashboardChart: React.FC<DashboardChartProps> = ({ finances }) => {
+  const [data, setData] = useState<(string | number)[][]>([["Mês", "Rendas", "Despesas"]]);
 
   useEffect(() => {
+    if (finances.length === 0) {
+      toast.info('Crie sua primeira transação!');
+    }
+
     const processFinances = (finances: Finance[]) => {
       const monthlyData = finances.reduce((acc, finance) => {
         const dateMonthYear = format(new Date(finance.createdAt), 'MM/yyyy');
@@ -37,7 +40,7 @@ const DashboardChart: React.FC<DashboardChartProps> = ({finances}) => {
         return acc;
       }, {} as Record<string, { income: number; expenses: number }>);
 
-      const processedData: (string | number)[][] = [["Mês", "Entradas", "Saídas"]];
+      const processedData: (string | number)[][] = [["Mês", "Rendas", "Despesas"]];
       Object.keys(monthlyData).forEach(dateMonthYear => {
         processedData.push([
           dateMonthYear,
@@ -50,13 +53,17 @@ const DashboardChart: React.FC<DashboardChartProps> = ({finances}) => {
     };
 
     const processedData = processFinances(finances);
-    setData(processedData);
+    if (finances.length === 0) {
+      setData([["Mês", "Rendas", "Despesas"], ["Sem dados", 0, 0]]);
+    } else {
+      setData(processedData);
+    }
   }, [finances]);
 
   const options = {
     chart: {
-      title: "Receitas x Despesas",
-      subtitle: "Comparativo mensal de receitas e despesas",
+      title: "Rendas x Despesas",
+      subtitle: "Comparativo mensal de Rendas e Despesas",
     },
     hAxis: {
       title: "Mês",
@@ -71,7 +78,7 @@ const DashboardChart: React.FC<DashboardChartProps> = ({finances}) => {
 
   return (
     <div className="p-4 bg-white rounded shadow-md">
-      <h2 className="text-lg font-semibold mb-4">Receitas x Despesas</h2>
+      <h2 className="text-lg font-semibold mb-4">Rendas x Despesas</h2>
       <Chart
         chartType="ColumnChart"
         width="100%"
