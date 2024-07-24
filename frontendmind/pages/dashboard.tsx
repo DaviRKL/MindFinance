@@ -90,9 +90,8 @@ const Dashboard: React.FC = () => {
       <div className="container mx-auto">
 
         <div className="container mx-auto p-4">
-          <h1 className="text-2xl font-semibold mb-4">Bem vindo de volta, Marcos Lopes!</h1>
-          <p className="mb-4">Seu último acesso foi em 22 de janeiro</p>
-
+          <h1 className="text-2xl font-semibold mb-4">Bem vindo de volta, {user?.name}!</h1>
+          
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
             <div className="bg-white p-4 rounded shadow-md text-center">
               <p className="text-green-500 text-3xl font-bold">{totalIncome.toFixed(2)}</p>
