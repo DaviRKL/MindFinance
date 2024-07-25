@@ -94,9 +94,36 @@ const Dashboard: React.FC = () => {
     setSelectedFinance(undefined);
   };
 
+  const handleSaveChanges = async (updatedUser: { name?: string; email?: string; password?: string; photo?: File }) => {
+    const formData = new FormData();
+    if (updatedUser.name) formData.append('name', updatedUser.name);
+    if (updatedUser.email) formData.append('email', updatedUser.email);
+    if (updatedUser.password) formData.append('password', updatedUser.password);
+    if (updatedUser.photo) formData.append('photo', updatedUser.photo);
+
+    try {
+      const response = await axios.put(
+        `http://localhost:3000/users/editProfile/${user?.id}`,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      toast.success('Perfil atualizado com sucesso');
+      setUser(response.data);
+    } catch (error) {
+      toast.error('Erro ao atualizar o perfil');
+      console.error('Erro ao atualizar o perfil:', error);
+    }
+  };
+
   return (
     <>
-      <Navbar user={user} />
+      <Navbar user={user} onSaveChanges={handleSaveChanges}/>
       <div className="container mx-auto">
 
         <div className="container mx-auto p-4">

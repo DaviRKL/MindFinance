@@ -7,7 +7,6 @@ const prisma = new PrismaClient();
 
 export const register = async (req: Request, res: Response) => {
   const { name, email, password } = req.body;
-
   const photo = req.file?.buffer;
 
   try {
@@ -59,7 +58,7 @@ export const updateProfile = async (req: Request, res: Response) => {
 export const login = async (req: Request, res: Response) => {
   const { email, password } = req.body;
   try {
-    const user = await prisma.user.findUnique({ where: { email: email, } });
+    const user = await prisma.user.findUnique({ where: { email: email } });
 
     if (!user) {
       return res.status(401).json({ error: 'Email ou senha invalida' });
@@ -78,8 +77,7 @@ export const login = async (req: Request, res: Response) => {
     console.error('Erro ao fazer login:', error);
     res.status(500).json({ message: 'Erro ao fazer login', error });
   }
-}
-
+};
 
 export const getProfile = async (req: Request, res: Response) => {
   const userId = (req as any).userId;
@@ -100,7 +98,13 @@ export const getProfile = async (req: Request, res: Response) => {
       return res.status(404).json({ error: 'Usuário não encontrado' });
     }
 
-    res.json(user);
+    
+    const userResponse = {
+      ...user,
+      photo: user.photo ? user.photo.toString('base64') : null,
+    };
+
+    res.json(userResponse);
   } catch (error) {
     console.error('Erro ao buscar perfil:', error);
     res.status(500).json({ message: 'Erro ao buscar perfil', error });

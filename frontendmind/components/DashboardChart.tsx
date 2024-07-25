@@ -19,9 +19,7 @@ const DashboardChart: React.FC<DashboardChartProps> = ({ finances }) => {
   const [data, setData] = useState<(string | number)[][]>([["Mês", "Rendas", "Despesas"]]);
 
   useEffect(() => {
-    if (finances.length === 0) {
-      toast.info('Crie sua primeira transação!');
-    }
+    
 
     const processFinances = (finances: Finance[]) => {
       const monthlyData = finances.reduce((acc, finance) => {

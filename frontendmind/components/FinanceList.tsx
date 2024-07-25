@@ -1,4 +1,4 @@
-import React from 'react'; // Importa React do React
+import React from 'react'; 
 
 interface Finance {
     id: number;
@@ -8,9 +8,9 @@ interface Finance {
 }
 
 interface FinanceListProps {
-  finances: Finance[]; // Array de finanças a ser exibido
-  onEdit: (finance: Finance) => void; // Função a ser chamada ao clicar em editar
-  onDelete: (id: number) => void; // Função a ser chamada ao clicar em deletar
+  finances: Finance[];
+  onEdit: (finance: Finance) => void; 
+  onDelete: (id: number) => void; 
 } 
 
 const FinanceList: React.FC<FinanceListProps> = ({ finances, onEdit, onDelete }) => {
@@ -38,4 +38,4 @@ const FinanceList: React.FC<FinanceListProps> = ({ finances, onEdit, onDelete })
   );
 };
 
-export default FinanceList; // Exporta o componente para uso em outras partes da aplicação
+export default FinanceList; 
