@@ -1,21 +1,32 @@
-FROM node:18.17.0-alpine AS builder
+# Utilizar uma imagem base do Node.js
+FROM node:18
 
+# Configurar o diretório de trabalho
 WORKDIR /app
 
-COPY package.json package-lock.json ./
+# Definir a variável de ambiente
+ENV NODE_ENV=development
 
+# Copiar arquivos de configuração
+COPY package*.json ./
+
+# Instalar dependências
 RUN npm install
 
+# Copiar o restante do código-fonte
 COPY . .
 
-RUN npm run build 
+# Mudar proprietário para o usuário app
+RUN chown -R node:node /app
 
-FROM node:18.17.0-alpine
+# Definir o usuário para as próximas etapas
+USER node
 
-WORKDIR /app
+# Construir o projeto
+RUN npm run build
 
-COPY --from=builder /app /app
+# Expor a porta que o Next.js vai utilizar
+EXPOSE 3000
 
-EXPOSE 3030
-
+# Comando para iniciar o aplicativo
 CMD ["npm", "start"]
