@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
 import FinanceForm from '../components/FinanceForm';
 import DashboardChart from '@/components/DashboardChart';
@@ -30,6 +30,8 @@ const Dashboard: React.FC = () => {
   const [selectedFinance, setSelectedFinance] = useState<Finance | undefined>(undefined);
   const [token, setToken] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
+  const [search, setSearch] = useState('');
+
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -122,6 +124,14 @@ const Dashboard: React.FC = () => {
     }
   };
 
+
+  const filtered_finances = useMemo(() => {
+    const lowerSearch = search.toLowerCase();
+    return  finances.filter((finance) =>
+     finance.category.toLowerCase().includes(lowerSearch)
+     );
+  }, [search, finances]);
+
   return (
     <>
       <Navbar user={user} onSaveChanges={handleSaveChanges}/>
@@ -147,8 +157,16 @@ const Dashboard: React.FC = () => {
             </div>
           </div>
 
+          <div className='mb-4'>
+              <input
+              type='text'
+              value={search}
+              onChange={(ev) => setSearch(ev.target.value)}
+              className='w-full p-2 border border-gray-300 rounded'
+              />
+          </div>
 
-          <DashboardChart finances={finances} />
+          <DashboardChart finances={filtered_finances} />
 
         </div>
         <ExpandableSection
@@ -157,7 +175,6 @@ const Dashboard: React.FC = () => {
           onEdit={handleEdit}
           onClose={handleClose}
         />
-
         <table className="table-auto w-full mt-4">
           <thead>
             <tr>
@@ -169,11 +186,11 @@ const Dashboard: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {finances.map((finance) => (
+            {filtered_finances.map((finance) => (
               <tr key={finance.id}>
                 <td className="border px-4 py-2">{finance.description}</td>
                 <td className="border px-4 py-2">{finance.category}</td>
-                <td className="border px-4 py-2">{finance.amount}</td>
+                <td className="border px-4 py-2">${finance.amount}</td>
                 <td className="border px-4 py-2">
                   {finance.type === "EXPENSE" ? "Despesa" : "Renda"}
                 </td>
