@@ -8,6 +8,7 @@ interface Finance {
     amount: number;
     createdAt: string;
     type: "INCOME" | "EXPENSE";
+    category: string;
   }
   
 interface ExpandableSectionProps {

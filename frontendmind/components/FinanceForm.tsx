@@ -8,6 +8,7 @@ interface Finance {
   description: string;
   amount: number;
   type: "INCOME" | "EXPENSE";
+  category: string;
 }
 
 interface FinanceFormProps {
@@ -17,6 +18,7 @@ interface FinanceFormProps {
 
 const FinanceForm: React.FC<FinanceFormProps> = ({ finance, onSuccess }) => {
   const [description, setDescription] = useState('');
+  const [category, setCategory] = useState('');
   const [amount, setAmount] = useState<number | ''>('');
   const [type, setType] = useState<"INCOME" | "EXPENSE">("INCOME");
   const [token, setToken] = useState<string | null>(null);
@@ -54,13 +56,13 @@ const FinanceForm: React.FC<FinanceFormProps> = ({ finance, onSuccess }) => {
       if (finance) {
         await axios.put(
           `http://localhost:3000/finances/${finance.id}`,
-          { description, amount, type },
+          { description, amount, type, category },
           { headers: { Authorization: `Bearer ${token}` } }
         );
       } else {
         await axios.post(
           'http://localhost:3000/finances',
-          { description, amount, type },
+          { description, amount, type, category },
           { headers: { Authorization: `Bearer ${token}` } }
         );
       }
@@ -80,6 +82,16 @@ const FinanceForm: React.FC<FinanceFormProps> = ({ finance, onSuccess }) => {
           type="text"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
+          className="w-full p-2 border rounded"
+          required
+        />
+      </div>
+      <div className="mb-4">
+        <label className="block text-gray-700">Categoria</label>
+        <input
+          type="text"
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
           className="w-full p-2 border rounded"
           required
         />

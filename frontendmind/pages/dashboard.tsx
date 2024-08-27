@@ -13,6 +13,7 @@ interface Finance {
   amount: number;
   createdAt: string;
   type: "INCOME" | "EXPENSE";
+  category: string;
 }
 
 interface User {
@@ -161,6 +162,7 @@ const Dashboard: React.FC = () => {
           <thead>
             <tr>
               <th className="px-4 py-2">Descrição</th>
+              <th className="px-4 py-2">Categoria</th>
               <th className="px-4 py-2">Valor</th>
               <th className="px-4 py-2">Tipo</th>
               <th className="px-4 py-2">Ações</th>
@@ -170,6 +172,7 @@ const Dashboard: React.FC = () => {
             {finances.map((finance) => (
               <tr key={finance.id}>
                 <td className="border px-4 py-2">{finance.description}</td>
+                <td className="border px-4 py-2">{finance.category}</td>
                 <td className="border px-4 py-2">{finance.amount}</td>
                 <td className="border px-4 py-2">
                   {finance.type === "EXPENSE" ? "Despesa" : "Renda"}
