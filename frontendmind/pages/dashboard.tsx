@@ -127,14 +127,14 @@ const Dashboard: React.FC = () => {
 
   const filtered_finances = useMemo(() => {
     const lowerSearch = search.toLowerCase();
-    return  finances.filter((finance) =>
-     finance.category.toLowerCase().includes(lowerSearch)
-     );
+    return finances.filter((finance) =>
+      finance.category.toLowerCase().includes(lowerSearch)
+    );
   }, [search, finances]);
 
   return (
     <>
-      <Navbar user={user} onSaveChanges={handleSaveChanges}/>
+      <Navbar user={user} onSaveChanges={handleSaveChanges} />
       <div className="container mx-auto">
 
         <div className="container mx-auto p-4">
@@ -158,64 +158,71 @@ const Dashboard: React.FC = () => {
           </div>
 
           <div className='mb-4'>
-              <input
+            <h2>Filtre suas finanças por categoria!</h2>
+            <input
               type='text'
               value={search}
               onChange={(ev) => setSearch(ev.target.value)}
               className='w-full p-2 border border-gray-300 rounded'
-              />
+              placeholder='Exemplo: Alimentacao'
+            />
           </div>
 
           <DashboardChart finances={filtered_finances} />
 
-        </div>
-        <ExpandableSection
+          <ExpandableSection
           selectedFinance={selectedFinance}
           onSuccess={handleSuccess}
           onEdit={handleEdit}
           onClose={handleClose}
         />
-        <table className="table-auto w-full mt-4">
-          <thead>
-            <tr>
-              <th className="px-4 py-2">Descrição</th>
-              <th className="px-4 py-2">Categoria</th>
-              <th className="px-4 py-2">Valor</th>
-              <th className="px-4 py-2">Tipo</th>
-              <th className="px-4 py-2">Ações</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filtered_finances.map((finance) => (
-              <tr key={finance.id}>
-                <td className="border px-4 py-2">{finance.description}</td>
-                <td className="border px-4 py-2">{finance.category}</td>
-                <td className="border px-4 py-2">${finance.amount}</td>
-                <td className="border px-4 py-2">
-                  {finance.type === "EXPENSE" ? "Despesa" : "Renda"}
-                </td>
-                <td className="border px-4 py-2">
-                  <button
-                    onClick={() => setSelectedFinance(finance)}
-                    className="bg-yellow-500 text-white px-2 py-1 rounded mr-2"
-                  >
-                    Editar
-                  </button>
-                  <button
-                    onClick={async () => {
-                      await axios.delete(`http://localhost:3000/finances/${finance.id}`, { headers: { Authorization: `Bearer ${token}` } });
-                      fetchFinances();
-                      toast.success('Transação excluida com sucesso!')
-                    }}
-                    className="bg-red-500 text-white px-2 py-1 rounded"
-                  >
-                    Deletar
-                  </button>
-                </td>
+        
+        <div className="bg-white p-4 rounded-lg shadow-md mb-4">
+          <table className="table-auto w-full mt-4">
+            <thead>
+              <tr>
+                <th className="px-4 py-2">Descrição</th>
+                <th className="px-4 py-2">Categoria</th>
+                <th className="px-4 py-2">Valor</th>
+                <th className="px-4 py-2">Tipo</th>
+                <th className="px-4 py-2">Ações</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {filtered_finances.map((finance) => (
+                <tr key={finance.id}>
+                  <td className="border px-4 py-2">{finance.description}</td>
+                  <td className="border px-4 py-2">{finance.category}</td>
+                  <td className="border px-4 py-2">${finance.amount}</td>
+                  <td className="border px-4 py-2">
+                    {finance.type === "EXPENSE" ? "Despesa" : "Renda"}
+                  </td>
+                  <td className="border px-4 py-2">
+                    <button
+                      onClick={() => setSelectedFinance(finance)}
+                      className="bg-yellow-500 text-white px-2 py-1 rounded mr-2"
+                    >
+                      Editar
+                    </button>
+                    <button
+                      onClick={async () => {
+                        await axios.delete(`http://localhost:3000/finances/${finance.id}`, { headers: { Authorization: `Bearer ${token}` } });
+                        fetchFinances();
+                        toast.success('Transação excluida com sucesso!')
+                      }}
+                      className="bg-red-500 text-white px-2 py-1 rounded"
+                    >
+                      Deletar
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        </div>
+        
+
       </div>
       <Footer />
     </>

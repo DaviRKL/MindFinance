@@ -29,7 +29,7 @@ interface ExpandableSectionProps {
       }, [selectedFinance]);
 
   return (
-    <div className="bg-gray-100 p-4 rounded-lg shadow-md mb-4">
+    <div className="bg-gray-100 p-4 rounded-lg shadow-md mb-4 mt-5">
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="w-full text-left flex items-center justify-between bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition"

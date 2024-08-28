@@ -73,8 +73,8 @@ const Navbar: React.FC<NavbarProps> = ({ user, onSaveChanges }) => {
 
   return (
     <nav className="bg-gradient-to-b from-blue-800 to-blue-300 p-4 flex justify-between items-center">
-      <div className="text-white text-lg font-semibold flex items-center">
-        <FaChartLine size={26} /><span> FinancesControll</span>
+      <div className="text-white text-lg font-semibold flex items-center  justify-center flex-grow">
+       <span> FinancesController</span>
       </div>
       {token && (
         <>
@@ -165,6 +165,8 @@ const Navbar: React.FC<NavbarProps> = ({ user, onSaveChanges }) => {
           />
         </>
       )}
+      
+      {/* <div className="w-20"></div> */}
     </nav>
   );
 };

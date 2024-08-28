@@ -72,6 +72,7 @@ const DashboardChart: React.FC<DashboardChartProps> = ({ finances }) => {
     series: {
       1: { curveType: "function" },
     },
+    colors: ["#22c55e", "#FF0000"],
   };
 
   return (
